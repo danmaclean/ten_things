@@ -1,0 +1,501 @@
+---
+title: "Ten Simple Rules for Effective Bioinformatic Practise"
+author: "Dan MacLean"
+format: revealjs
+---
+
+## This talk
+
+:::: {.columns}
+
+:::{.column width="25%"}
+
+- Any project
+- Type Agnostic (field, data, language, computer)
+- Very opinionated
+
+:::
+
+:::{.column width="75%"}
+!['Da Vinci pencil sketch of a pet bioinformatician' - _DALL-E 2_](img/pet_bioinformatician.png)
+:::
+
+::::
+# I. Use a consistent project structure
+
+## A good structure optimises ...
+
+::: {.incremental}
+  1. Organization 
+  2. Collaboration
+  3. Reproducibility
+  4. Documentation
+  5. Future reference
+  6. Speed
+  7. Portability
+:::
+
+
+::: {.notes}
+1 - A well-defined project structure makes it easier for you to locate and access specific files or directories within the project. Without a clear structure, it can be challenging to navigate through project files, leading to confusion and errors.
+
+2 - provides a standardized framework for collaboration, meaning everyone understands the organization and can easily contribute to the project. It promotes efficient communication and facilitates the sharing of code, data, and results among team members
+
+3 - enables you to reproduce your own work and allow others to replicate and validate their findings. By following a standardized structure, researchers can ensure that all necessary components, such as input data, preprocessing scripts, analysis code, and output results, are included and clearly documented. 
+
+4 - By providing clear instructions and explanations, researchers can ensure that others can understand and reproduce their work, reducing ambiguity and potential errors. Not just code documentation, a lab book is documentation.
+
+5 - You can easily return to your projects after a period of time, understand the organization, and pick up where they left off. It allows for the efficient reuse of code, data, and methods, saving time and effort in subsequent studies. Helps past work serve as a foundation for future research. 
+
+6 - All the above contribute to efficiency. Efficient is good, an efficient workflow will speed up your project progress. 
+
+7 - The structure gives a huge advantage when you need to move computers, especially to an HPC, a cloud like Colab or Amazon. This comes from the fact that it's self-contained and all references are internal.
+:::
+
+
+## The biggest beneficiary
+
+:::: {.columns}
+
+:::{.column width="40%"}
+
+Future (stressed) you!
+
+:::
+
+:::{.column width="60%"}
+
+!['a digital art of a stressed person' - _DALL-E 2_](img/future_you.png)
+:::
+
+::::
+
+::: {.notes}
+The person who'll get the most out of these is you! A future version of you under some time or other pressure.
+:::
+
+## Suggested project structure
+
+:::: {.columns}
+
+:::{.column width="40%"}
+- a few folders, each containing things with similar function
+:::
+
+:::{.column width="20%"}
+
+:::
+
+:::{.column width="40%"}
+
+:::{.incremental}
+- my_project/
+  - raw/
+  - src/
+  - lib/
+  - analysis/
+
+:::
+
+:::
+
+::::
+
+::: aside
+Not the whole set of folders you could use, but by far the most common.
+:::
+
+::: {.notes}
+To implement this you'll need just a few common folders.
+
+1 - the top level should ideally be the name of the project. In most contexts I think the project is something granular like the current question - not your entire PhD.
+
+2 - raw contains any raw data from sampling or from machines that you want to analyses. Not usually large high-throughput data like images or sequence that should be loaded in from a stable place in a repository. The important thing about raw is that it is also read_only don't let your scripts edit contents
+
+3 - src is a place to keep larger re-used code snippets and scripts that you might want to run or load into analysis documents. We'll take a closer look at this in a minute, but src is not where the bulk of your code or analysis tools will be.
+
+4 - lib is a library - information for lookup - so contains reference and metadata files, really varied, but only ever _read_ by your analysis code, never _written_ . Its stuff like files full of genome lengths, species names, project specific meta stuff
+
+5 - Finally we have the analysis folder that contains the actual code and results in some sort of combined code and text lab-book document. This is where most of your work will happen, and where most of the outputs are generated. These documents aren't scripts, in general scripts are not your analysis friend and should be avoided where possible. Instead you should pay attention to my second rule:
+
+
+:::
+
+
+# II. Use literate computation
+
+## Mix code into natural language
+
+:::: {.columns}
+
+:::{.column width="60%"}
+![A literate computation document in RStudio](img/rmd.png)
+:::
+
+:::{.column width="40%"}
+
+::: {.incremental}
+- Bake-in GoHREP
+- Easy to write
+- Easy to read
+- Easy to re-run
+- Avoids using command-line/console for work (I'm looking at you R and BASH)
+:::
+
+:::
+
+::::
+
+::: {.notes}
+A literate computation document is one that is based on natural language but includes paragraphs of code that are executed within the document and the results reflected there as well. (FIG). 
+
+These are better than scripts full of code for the most part because :
+
+1. We write these such that the natural language part describes the goals, hypotheses and procedure into the executable, where we need it. It is an executable lab book.
+
+2. This makes it easy to write than scripts- the structure is easier to define because we aren't thinking in just code all the time and we make our goals explicit - an important part of turning an idea into code.
+
+3. Most code is very hard to read, especially when we come back to it after a while. We have things like comments that can help but its not widely useful or used. Having a natural language document with some code in it gives us a much more readable thing
+
+4. The document itself is executable, so it can be re-run very quickly. Because we baked in the question and made everything specific including input data we don't have to struggle remembering the input data and set up from the last time we ran it as we might with a generic script.
+
+5. Finally, the document completely replaces the sort of stuff you might want to do interactively, capturing it so you don't have to repeat it.  
+
+:::
+
+---
+
+![An example literate programming analysis](img/specific.png)
+
+::: {.notes}
+These documents should be very specific to a time and a dataset and an idea, unlike scripts which we labour to make general. You can see in this example, the very 'lab-book' quality about it. Its very clear which files are being loaded in, and it's very clear about the processing and transformations it's doing to the data as well as naturally being explicit about the functions and analysis being done.
+:::
+
+
+
+## Novel or short-story?
+::: {.incremental}
+- Make as many of these documents as needed
+  - 50? 5? OK!
+- Don't edit/overwrite when things change  - remember 'lab-book' 
+- preface filenames with `0001_xxxx` ,`0002_xxx`, ...
+:::
+
+::: {.notes}
+The first question with these documents is how much should it contain? I say tend towards shorter rather than longer, keep each to one analysis or question. 
+
+1. meaning that you can make as many as you need
+  - 50 wouldnt be an unusual number over a PhD or postdoc.
+2. Remember this is analagous to a lab book, and in the same way as you wouldn't erase a page in a lab-book and start over, don't here. Just start a new one that picks up with your new ideas about the question.
+3. To make this manageable, a good tip is always start the file name with leading zeroes and a consecutive number. This will keep everything in natural order in the filesystem. 
+:::
+
+## How to do it
+
+ - Learn Markdown
+ - Use one (or more) of:
+   - Quarto ^[use Quarto, not the others]
+   - Jupyter
+   - Pandoc
+   - Rmarkdown
+   
+
+::: {.notes}
+Implementing literate programming is straightforward. 
+
+1 - you'd need to learn markdown, which is _not_ a programming language, its a list of about 7 shorthands for marking sections of text as headers or images or code - it's actually easier to use than Word for writing. 
+2 - then to convert your documents you'd use Quarto. This is just a program the executes the code and puts the results in for you. Lesser equivalents are available The process is facilitated by being incorporated natively into tools in my third simple rule..
+:::
+
+
+# III. Use an IDE 
+
+
+::: {.notes}
+An Integrated Development Environment is a productivity tool. It's the right sort of tool for bioinformatics.
+:::
+
+## Not a text editor
+
+:::{.incremental }
+ - Multimodal views
+ - Realtime object inspection
+ - Project management
+:::
+
+:::{.notes}
+1. IDEs ease your work load by combining the code editor, terminal and file browswers into one managed window, as well as an interactive console that is useful for debugging. 
+
+2. This is also aided by tools for in-memory object inspection, you can look at the contents of variables as they are created and try out code on them as you go - akin to being able to edit the processes in realtime which is much faster and easier to understand than printing output from scripts to a terminal window.
+
+3. They also provide tools for project management, including integration with version control tools which simplifying sharing and versioning.
+:::
+
+
+## Which to use?
+ 
+ - Python
+   - VS Code
+   - Jupyterlab
+   - PyCharm ^[this is good]
+ - R
+   - RStudio ^[this is better, especially for data science projects at TSL]
+
+:::{.notes}
+There are a fair number out there. I would use PyCharm and RStudio depending on which end of a workflow Im at, PyCharm when Im building the workflow on an HPC, RStudio when I've got what I want from a workflow and need to analyse its distilled results.
+
+Which leads me on to the next point
+:::
+
+# IV. Learn a workflow framework
+
+:::{.notes}
+Workflow frameworks are ways of outlining the tools, data and dependencies of a data analysis and letting the framework do the actual job running and management for you.
+
+In essence, you simply say how the outputs of one tool feed into another, set the parameters and let it go. These are a massive productivity boost and are very worth learning if you spend any time on the HPC as they can  save you from so much repetitive work.
+:::
+
+## Advantages
+
+::::{.columns}
+
+:::{.column width="40%"}
+
+:::{.incremental}
+  - Scalable
+  - Reproducible
+:::
+
+:::
+
+:::{.column width="60%"}
+!['An alignment workflow as a directed acyclic graph from snakemake' ](img/dag_mrsa.svg)
+:::
+::::
+
+:::{.notes}
+1. These things are scalable in a way that wrapper scripts aren't. Because the thing is made from definitions and rules you set up, adding in a million more files doesn't make any difference, the flow is the same. Changing every single input file doesn't make any difference either.
+
+2. They're more reproducible, they all have some facility for working out what's left to do, so if you have a disaster or some step falls over unexpectedly they can pick up automatically without hassle. 
+:::
+
+## Which one?
+  
+  - snakemake
+  - nextflow
+  - Common Workflow Language
+  
+:::{.notes}
+For your work at TSL use snakemake, which is based on Python, though nextflow is used widely in big data circles, and integrates well with cloud stuff so if that's your eventual target job, try it out.
+:::
+
+# V. Use project level environments
+
+
+## Avoid software clashes
+
+::: {.columns}
+
+:::{.column width="50%"}
+
+:::{.incremental}
+- Easier installs
+- Project specific tool versions
+- 'Freeze' versions
+- Rebuild after time
+- Portable 
+:::
+:::
+
+:::{.column width="50%"}
+ 
+!['A watercolour of two dogs fighting over a bone' - _DALL-E 2_](img/dogfight.png)
+:::
+
+::::
+
+:::{.notes}
+The main purpose of these is to make your collections of software tools and packages much smaller and easier to manage, preventing clashes and problems that come from different versions.
+
+1. They allow for much easier installs 
+2. They provide project specific versions, so that your old code isnt ruined by an updated pacakge
+3. Similarly you can freeze a version, insisting that a specific one and not just the latest is used
+4. They provide tools to tell you which packages pertain to this project, so you can export a list and rebuild easily
+5. And this makes the project portable, with such a list you can import into new environments on other machines and transport the project to new computers or the cloud.
+:::
+
+# VI. Keep workflows not (intermediate) data
+
+:::{.notes}
+When we run our tools direct, or we micromanage the running of them we often get into a place where the effort it takes to generate a particular file makes it feel disproportionately important. We get terrified of deleting it so we don't have to go through the entire process again. This can be deleterious when we have large projects and many intermediate files. Workflows ease this
+:::
+
+## Redo is cheap with workflows
+
+:::{.incremental}
+- Focus on path from raw data to end point - mid point is explicit but transient
+- No ambiguity
+- No fear
+:::
+
+
+:::{.notes}
+
+1. Because workflows define what must be done with what to create something they free us from having to archive the middle bits 'just in case'. We can redo everything cheaply and with certainty.
+2. Keeping many large intermediate files leads to confusion about their contents quite often. We can ditch this problem with a workflow.
+3. We also get to ditch the fear of deleting something that might be needed again. We can simply re-generate with a good workflow.
+:::
+
+# VII. Document
+
+## Make it readable
+
+:::{.incremental}
+- Don't be WORN (Write once, read never)
+- Use Bots (Copilot, ChatGPT)
+- Unit tests
+:::
+
+:::{.notes}
+1. Most code is written but not often read, its harder to read code than a normal language, so assisting ourself with easy to read documentation is a massive help on non-trivial projects.
+2. Except that writing it is really, really tedious. So use ChatGPT or something similar. We know ChatGPT is bad at writing code, but it is great at reading it. Give it something you've written and ask it to write a README or use instructions, or to document all the functions and it is brilliant. 
+3. You should also get ChatGPT to write tests for your code, especially the variety known as unit tests. These are very useful way of speeding up code development by reducing bugs. Again people skip these because they are boring and they're one of those things that speed you up but make you feel like you're going slower. It takes a bit of maturity and experience to see the value of unit tests, so shortcut and get the bot to write them.
+:::
+
+
+# VIII. Learn to abstract code 
+
+:::{.notes}
+
+Code abstraction means roughly - hiding the details under the hood. Taking the long-windedness out of code and simplifying it for repeated use by sticking it somewhere else. This is an intermediate/advanced skill that pays dividends by making the code itself easier to re-use and therefore your work more powerful.
+:::
+
+## All code is abstracted
+
+::::{.columns}
+
+:::{.column width="50%"}
+:::{.incremental}
+- functions
+- modules
+- objects
+:::
+:::
+
+
+
+:::{.column width="50%"}
+
+```
+
+> sd
+
+function (x, na.rm = FALSE) 
+sqrt(var(if (is.vector(x) || is.factor(x)) x else as.double(x), 
+    na.rm = na.rm))
+
+```
+
+:::
+::::
+
+:::{.notes}
+1. The entry point to abstraction is making code into your own functions, almost all code is abstraction,  this is the standard deviation function of R - to use it you just type `sd` but if that abstraction didn't exist, you'd have to type in this much longer code every time. It's easy to see how the abstraction is easier to use. 
+2. The next level is files full of functions that seem to have different names in different languages, but we can call modules. You can make your own modules full of your own re-useable functions. And you don't have to go through the rigmarole of making them into a package to use them. They can literally just be a single file of functions.
+3. Objects are a further level of abstraction, and a very powerful one where we can mix data with code and get data to apparently do stuff to itself. These are especially useful when you are working with multi-record data like any SNP call, sequence analysis, image analysis and you've probably used one'st that somebody else built already.  
+:::
+
+
+# IX. Don't think of this as a tax on your time
+
+:::{.notes}
+You may be sitting there, feeling the pressure of your project and thinking, yeah it'd be nice but I have work to do. I've not got time to sit around and fiddle with side ideas like this. I understand that, and everyone is busy, so I encourage you to think about this in terms of what you lose to your competitors if you don't try some of these things. Think of the opportunity cost.
+:::
+
+
+## It's not an investment, its necessary
+
+!['An opportunity cost'](img/wheels.jpeg)
+
+:::{.notes}
+We can definitely think of taking time to improve our practice as an investment but in reality its something that costs us more, the longer we put off doing it. I encourage you to find an excuse to try some of these things rather than falsely justify not trying them. 
+:::
+
+
+# X. Apply as neccesary
+
+:::{.notes}
+That said, some pragmatism is needed. Some of these do need a level of experience before you can make them part of your routine. I'll be more explicit in a second, but in general I want you to think of any rational development pipeline to look like this
+:::
+
+## Add parts as your experience builds
+
+![Spotify product build - Spotify Ltd](img/spotify1.png)
+
+:::{.notes}
+Don't plan to build the perfect end point and have all the intermediate points unusable, instead find a way for each step to be an improvement on the last and something that contributes positively in itself. 
+:::
+
+# The Cost
+
+:::{.notes}
+I said I'd mention the overheads to adopting any of these practices. Let's look at the points by group
+:::
+
+## Organisational skills 
+
+| Point | Time to implement/learn | Prior experience | Payback |
+|:------|:-----------------------:|:----------------:|:--------|
+| 1. Folders | < 1d | Nil | High |
+| 2. Literate Computing | 1d | Nil | High |
+| 3. IDE | 3d | Low (Confidence with Cmds/language) | High |
+: Minimum for an entry-level bioinformatics job
+
+:::{.notes}
+The first three, which fall under the heading of 'organisational' are pretty easy to implement. They can be done in under a day, usually just a couple of hours. And they become a pretty solid part of your practise after that. The payback on investment in these is pretty high. These would be minimal professional skills needed for a bioinformatics job at a professional place, like a company. 
+:::
+
+## Work smarter skills
+
+| Point | Time to implement/learn | Prior experience | Payback |
+|:------|:-----------------------:|:----------------:|:--------|
+| 4. Workflows | 10d | Med (Confidence with a language) | Very High |
+| 5. Environments | 1d | Low | Nil | Med |
+| 6. Reduce intermediate data | 3d | Med (Confidence with workflows) | Med |
+: Skills in high demand for bioinformatics / data science in general
+
+:::{.notes}
+The next three which I can categorise as 'work smarter not harder' take just a little bit more learning - the workflow framework might take 10d - and I don't mean ten solid days on just that, but two weeks worth of working it into your existing scripts  while still remaining productive. 10d is the time  until you've really got it down well, the time to basic productivity is low, within a few hours you'll still have something better than what you had before. The payback on this one is huge!
+
+The Environments one is an easy win, these take a very short time to learn and apply,
+
+The Reduce intermediate data would be a section within the learning of the workflows, its kind of dependent on doing that, so if you look at that skill, you'll get this for minimal effort.
+
+These together are the most valuable skills in the job market at the moment, if you can manage to learn these on top of the earlier set you will be a very strong candidate for a wide range of bioinformatics/data science jobs.
+:::
+
+## Professional data science/software engineering skills
+
+| Point | Time to implement/learn | Prior experience | Payback |
+|:------|:-----------------------:|:----------------:|:--------|
+| 7. Document | < 1d | Med (Confidence with language)  | Med |
+| 8. Abstraction | 100 d (functions) 300 d (objects) | High (Good ability with language) | High |
+: Software engineering jobs use these at entry level
+
+:::{.notes}
+These two are more mixed, learning to document with a bot is easy, you just need the domain knowledge to know whether it messed it up things up, otherwise managing it is trivial.
+
+The skill of abstraction takes genuine experience. Sure you can learn to program on some level quickly, but to do it well takes practice, like you can learn to bash out Twinkle Twinkle on a piano quickly, but to play anything really well takes a longer time and commitment. So it will be with these higher level skills in putting together you work. It is worthwhile though and are the skills looked for in more general development and computational jobs.
+:::
+
+## Openness, integrity and professionalism
+
+ - i. Use a consistent project structure
+ - II. Use literate computation
+ - IV. Learn a workflow framework
+ 
+:::{.notes}
+Finally, these are the ones that contribute to our responsibilities in integrity and professionalism. All these allow us to properly and professionally record our work and reproduce it. Without these, most bioinformatics work looks opaque and can be accused of being unopen and maybe even fraudulent. These three keep everything you did explicit, so above all of those issues.
+:::
+
+# Questions?
